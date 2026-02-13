@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProgressBar } from "@/components/ui/progress";
@@ -10,34 +11,11 @@ import {
     ClipboardCheck,
     ArrowRight,
     User,
+    Loader2,
 } from "lucide-react";
 import Link from "next/link";
 import type { ChildSummary } from "@/types";
-
-// ==================== Mock 데이터 ====================
-
-const mockParentName = "김학부모";
-
-const mockChildrenSummary: ChildSummary[] = [
-    {
-        studentId: 1,
-        studentName: "김민수",
-        progressRate: 75,
-        pendingAssignments: 1,
-        latestScore: 85,
-        latestScoreSubject: "수학",
-        className: "A반 수학",
-    },
-    {
-        studentId: 2,
-        studentName: "김영희",
-        progressRate: 60,
-        pendingAssignments: 0,
-        latestScore: 92,
-        latestScoreSubject: "영어",
-        className: "B반 영어",
-    },
-];
+import { getDashboard } from "@/lib/api/parent";
 
 // ==================== 컴포넌트 ====================
 
@@ -81,8 +59,8 @@ function ChildSummaryCard({ child }: { child: ChildSummary }) {
                     </span>
                     <span
                         className={`font-medium ${child.pendingAssignments > 0
-                                ? "text-warning"
-                                : "text-success"
+                            ? "text-warning"
+                            : "text-success"
                             }`}
                     >
                         {child.pendingAssignments}건
@@ -116,12 +94,50 @@ function ChildSummaryCard({ child }: { child: ChildSummary }) {
 }
 
 export default function DashboardPage() {
+    const [children, setChildren] = useState<ChildSummary[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [parentName, setParentName] = useState("학부모");
+
+    useEffect(() => {
+        async function fetchDashboard() {
+            try {
+                setLoading(true);
+                const data = await getDashboard();
+                // Map API response to ChildSummary type
+                const mappedChildren: ChildSummary[] = (data.children || []).map((c: any) => ({
+                    studentId: c.studentId || c.id,
+                    studentName: c.studentName || c.name,
+                    progressRate: c.progressRate ?? 0,
+                    pendingAssignments: c.pendingAssignments ?? 0,
+                    latestScore: c.latestScore,
+                    latestScoreSubject: c.latestScoreSubject || '',
+                    className: c.className || '',
+                }));
+                setChildren(mappedChildren);
+            } catch (err) {
+                console.error("Failed to fetch dashboard:", err);
+                setChildren([]);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchDashboard();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center p-12">
+                <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+            </div>
+        );
+    }
+
     return (
         <div className="p-6 space-y-6">
             {/* 인사 헤더 */}
             <div className="space-y-1">
                 <h1 className="text-2xl font-bold tracking-tight">
-                    👋 안녕하세요, {mockParentName}님
+                    👋 안녕하세요, {parentName}님
                 </h1>
                 <p className="text-muted-foreground">
                     자녀의 수업 현황을 한눈에 확인하세요
@@ -137,7 +153,7 @@ export default function DashboardPage() {
                         </div>
                         <div>
                             <p className="text-sm text-muted-foreground">등록 자녀</p>
-                            <p className="text-2xl font-bold">{mockChildrenSummary.length}명</p>
+                            <p className="text-2xl font-bold">{children.length}명</p>
                         </div>
                     </CardContent>
                 </Card>
@@ -150,7 +166,7 @@ export default function DashboardPage() {
                         <div>
                             <p className="text-sm text-muted-foreground">미제출 과제</p>
                             <p className="text-2xl font-bold">
-                                {mockChildrenSummary.reduce(
+                                {children.reduce(
                                     (sum, c) => sum + c.pendingAssignments,
                                     0
                                 )}
@@ -168,12 +184,14 @@ export default function DashboardPage() {
                         <div>
                             <p className="text-sm text-muted-foreground">평균 진도율</p>
                             <p className="text-2xl font-bold">
-                                {Math.round(
-                                    mockChildrenSummary.reduce(
-                                        (sum, c) => sum + c.progressRate,
-                                        0
-                                    ) / mockChildrenSummary.length
-                                )}
+                                {children.length > 0
+                                    ? Math.round(
+                                        children.reduce(
+                                            (sum, c) => sum + c.progressRate,
+                                            0
+                                        ) / children.length
+                                    )
+                                    : 0}
                                 %
                             </p>
                         </div>
@@ -185,9 +203,15 @@ export default function DashboardPage() {
             <div>
                 <h2 className="text-lg font-semibold mb-4">자녀별 현황</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {mockChildrenSummary.map((child) => (
-                        <ChildSummaryCard key={child.studentId} child={child} />
-                    ))}
+                    {children.length > 0 ? (
+                        children.map((child) => (
+                            <ChildSummaryCard key={child.studentId} child={child} />
+                        ))
+                    ) : (
+                        <div className="col-span-full text-center text-sm text-muted-foreground py-8">
+                            등록된 자녀 정보가 없습니다
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
