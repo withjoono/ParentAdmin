@@ -1,0 +1,16 @@
+{
+    "hosting": {
+        "site": "parent-admin-479305",
+        "public": "out",
+        "ignore": [
+            "firebase.json",
+            "**/.*",
+            "**/node_modules/**"
+        ],
+        "rewrites": [
+            {
+                "source": "**",
+                "destination": "/index.html"
+            }
+        ]
+ 
