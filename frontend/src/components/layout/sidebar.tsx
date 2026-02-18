@@ -2,11 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import {
     LayoutDashboard,
     BookOpen,
     Bell,
+    Wallet,
+    Users,
     LogOut,
+    Menu,
+    X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -36,44 +41,122 @@ const navItems: NavItem[] = [
 
 export function Sidebar() {
     const pathname = usePathname();
+    const [mobileOpen, setMobileOpen] = useState(false);
 
     const isActive = (href: string) =>
         href === "/" ? pathname === "/" : pathname.startsWith(href);
 
     return (
-        <aside className="flex h-screen w-64 flex-col" style={{ borderRight: '1px solid var(--color-border-light)', background: 'var(--color-bg-elevated)' }}>
-            <div className="flex h-14 items-center px-6" style={{ borderBottom: '1px solid var(--color-border-light)' }}>
-                <h1 className="text-[15px] font-bold tracking-tight" style={{ color: 'var(--color-primary)' }}>
-                    Parent Admin
-                </h1>
-            </div>
+        <>
+            {/* ─── Top Navigation Bar ─── */}
+            <header className="sticky top-0 z-40 w-full border-b border-gray-200 bg-white">
+                <div className="mx-auto max-w-screen-xl px-4">
+                    <div className="flex h-14 items-center justify-between">
+                        {/* Left: Logo */}
+                        <div className="flex items-center gap-3">
+                            <Link href="/" className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
+                                <div className="flex h-7 w-7 items-center justify-center rounded-md bg-emerald-600">
+                                    <span className="text-xs font-bold text-white">P</span>
+                                </div>
+                                <span className="text-[15px] font-bold tracking-tight text-emerald-600">
+                                    Parent Admin
+                                </span>
+                            </Link>
+                        </div>
 
-            <nav className="flex-1 overflow-auto space-y-1 p-4">
-                {navItems.map((item) => (
-                    <Link
-                        key={item.href}
-                        href={item.href}
-                        className={cn(
-                            "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
-                            isActive(item.href)
-                                ? "text-white"
-                                : "hover:bg-gray-100"
-                        )}
-                        style={isActive(item.href) ? { background: 'var(--color-primary)', color: '#fff' } : { color: 'var(--color-text-secondary)' }}
-                    >
-                        <item.icon className="h-4 w-4" />
-                        {item.title}
-                    </Link>
-                ))}
-            </nav>
+                        {/* Center: Desktop Nav */}
+                        <nav className="hidden md:flex items-center gap-1">
+                            {navItems.map((item) => (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className={cn(
+                                        "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                                        isActive(item.href)
+                                            ? "text-emerald-600 bg-emerald-50"
+                                            : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                                    )}
+                                >
+                                    <item.icon className="h-4 w-4" />
+                                    {item.title}
+                                </Link>
+                            ))}
+                        </nav>
 
-            <div className="p-4" style={{ borderTop: '1px solid var(--color-border-light)' }}>
-                <div className="mb-2 px-3 text-xs font-medium" style={{ color: 'var(--color-text-tertiary)' }}>학부모</div>
-                <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100" style={{ color: 'var(--color-text-tertiary)' }}>
-                    <LogOut className="h-4 w-4" />
-                    로그아웃
-                </button>
-            </div>
-        </aside>
+                        {/* Right: Icon buttons */}
+                        <div className="hidden md:flex items-center gap-1">
+                            {/* 결제 */}
+                            <button
+                                className="relative flex h-9 w-9 items-center justify-center rounded-full text-blue-600 hover:text-blue-700 hover:bg-blue-50 transition-colors"
+                                title="결제"
+                            >
+                                <Wallet className="h-5 w-5" />
+                            </button>
+                            {/* 알림 */}
+                            <Link
+                                href="/notifications"
+                                className="relative flex h-9 w-9 items-center justify-center rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                                title="알림"
+                            >
+                                <Bell className="h-5 w-5" />
+                            </Link>
+                            {/* 계정연동 */}
+                            <button
+                                className="relative flex h-9 w-9 items-center justify-center rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                                title="계정연동"
+                            >
+                                <Users className="h-5 w-5" />
+                            </button>
+                            {/* 로그아웃 */}
+                            <button
+                                className="ml-1 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-red-500 hover:bg-gray-100 transition-colors"
+                                title="로그아웃"
+                            >
+                                <LogOut className="h-4 w-4" />
+                                <span className="hidden lg:inline">로그아웃</span>
+                            </button>
+                        </div>
+
+                        {/* Mobile hamburger */}
+                        <button
+                            className="flex md:hidden p-2 text-gray-500 hover:text-gray-900"
+                            onClick={() => setMobileOpen(!mobileOpen)}
+                        >
+                            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                        </button>
+                    </div>
+
+                    {/* Mobile Menu */}
+                    {mobileOpen && (
+                        <div className="md:hidden border-t border-gray-200 pb-3 pt-2">
+                            <nav className="space-y-1">
+                                {navItems.map((item) => (
+                                    <Link
+                                        key={item.href}
+                                        href={item.href}
+                                        onClick={() => setMobileOpen(false)}
+                                        className={cn(
+                                            "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                                            isActive(item.href)
+                                                ? "text-emerald-600 bg-emerald-50"
+                                                : "text-gray-600 hover:bg-gray-100"
+                                        )}
+                                    >
+                                        <item.icon className="h-4 w-4" />
+                                        {item.title}
+                                    </Link>
+                                ))}
+                            </nav>
+                            <div className="mt-3 border-t border-gray-100 pt-3 px-3">
+                                <button className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-500 hover:bg-gray-100">
+                                    <LogOut className="h-4 w-4" />
+                                    로그아웃
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </header>
+        </>
     );
 }
