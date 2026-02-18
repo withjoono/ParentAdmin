@@ -41,10 +41,10 @@ export function Sidebar() {
         href === "/" ? pathname === "/" : pathname.startsWith(href);
 
     return (
-        <aside className="flex h-screen w-64 flex-col border-r bg-card">
-            <div className="flex h-16 items-center border-b px-6">
-                <h1 className="text-xl font-bold text-primary">
-                    🎓 학부모
+        <aside className="flex h-screen w-64 flex-col" style={{ borderRight: '1px solid var(--color-border-light)', background: 'var(--color-bg-elevated)' }}>
+            <div className="flex h-14 items-center px-6" style={{ borderBottom: '1px solid var(--color-border-light)' }}>
+                <h1 className="text-[15px] font-bold tracking-tight" style={{ color: 'var(--color-primary)' }}>
+                    Parent Admin
                 </h1>
             </div>
 
@@ -54,22 +54,23 @@ export function Sidebar() {
                         key={item.href}
                         href={item.href}
                         className={cn(
-                            "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                            "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
                             isActive(item.href)
-                                ? "bg-primary text-primary-foreground"
-                                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                                ? "text-white"
+                                : "hover:bg-gray-100"
                         )}
+                        style={isActive(item.href) ? { background: 'var(--color-primary)', color: '#fff' } : { color: 'var(--color-text-secondary)' }}
                     >
-                        <item.icon className="h-5 w-5" />
+                        <item.icon className="h-4 w-4" />
                         {item.title}
                     </Link>
                 ))}
             </nav>
 
-            <div className="border-t p-4">
-                <div className="mb-2 px-3 text-sm text-muted-foreground">학부모</div>
-                <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground">
-                    <LogOut className="h-5 w-5" />
+            <div className="p-4" style={{ borderTop: '1px solid var(--color-border-light)' }}>
+                <div className="mb-2 px-3 text-xs font-medium" style={{ color: 'var(--color-text-tertiary)' }}>학부모</div>
+                <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100" style={{ color: 'var(--color-text-tertiary)' }}>
+                    <LogOut className="h-4 w-4" />
                     로그아웃
                 </button>
             </div>
