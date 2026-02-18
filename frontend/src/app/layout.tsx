@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import "@/styles/design-system/index.css";
 import "./globals.css";
 import { Providers } from "./providers";
 import { SSOListener } from "@/components/SSOListener";
@@ -25,7 +26,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="ko">
+        <html lang="ko" data-app="parent-admin">
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
                 <SSOListener />
                 <Providers>{children}</Providers>
