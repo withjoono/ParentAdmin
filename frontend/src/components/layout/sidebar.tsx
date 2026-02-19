@@ -17,7 +17,6 @@ import {
     FileText,
 } from "lucide-react";
 import { WonCircle } from "@/components/icons";
-import { cn } from "@/lib/utils";
 
 interface NavItem {
     title: string;
@@ -67,114 +66,101 @@ export function Sidebar() {
 
     return (
         <>
-            {/* ─── Top Navigation Bar ─── */}
-            <header className="sticky top-0 z-40 w-full border-b border-gray-200 bg-white">
-                <div className="mx-auto max-w-screen-xl px-4">
-                    <div className="flex h-14 items-center justify-between">
-                        {/* Left: Logo */}
-                        <div className="flex items-center gap-3">
-                            <Link href="/" className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
-                                <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary">
-                                    <span className="text-xs font-bold text-white">P</span>
-                                </div>
-                                <span className="text-[15px] font-bold tracking-tight text-primary">
-                                    Parent Admin
-                                </span>
-                            </Link>
-                        </div>
+            {/* ─── Top Navigation Bar (gb-header design system) ─── */}
+            <header className="gb-header">
+                <div style={{ maxWidth: '1280px', margin: '0 auto', width: '100%', padding: '0 var(--space-4)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '100%' }}>
+                    {/* Left: Logo */}
+                    <Link href="/" className="gb-header-brand" style={{ textDecoration: 'none' }}>
+                        <span className="gb-header-brand-dot" style={{ width: 28, height: 28, borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <span style={{ fontSize: 'var(--text-xs)', fontWeight: 'var(--weight-bold)', color: 'var(--color-text-on-primary)' }}>P</span>
+                        </span>
+                        Parent Admin
+                    </Link>
 
-                        {/* Center: Desktop Nav */}
-                        <nav className="hidden md:flex items-center gap-1">
+                    {/* Center: Desktop Nav */}
+                    <nav className="gb-header-nav gb-hide-mobile">
+                        {navItems.map((item) => (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                className={`gb-header-nav-link${isActive(item.href) ? " active" : ""}`}
+                            >
+                                <item.icon style={{ width: 16, height: 16 }} />
+                                {item.title}
+                            </Link>
+                        ))}
+                    </nav>
+
+                    {/* Right: Icon buttons */}
+                    <div className="gb-header-actions gb-hide-mobile">
+                        {/* 결제 */}
+                        <button
+                            className="gb-header-icon-btn"
+                            style={{ color: 'var(--color-primary)' }}
+                            title="결제"
+                        >
+                            <WonCircle style={{ width: 20, height: 20 }} />
+                        </button>
+                        {/* 알림 */}
+                        <Link
+                            href="/notifications"
+                            className="gb-header-icon-btn"
+                            title="알림"
+                        >
+                            <Bell style={{ width: 20, height: 20 }} />
+                        </Link>
+                        {/* 계정연동 */}
+                        <button
+                            className="gb-header-icon-btn"
+                            title="계정연동"
+                        >
+                            <Users style={{ width: 20, height: 20 }} />
+                        </button>
+                        {/* 로그아웃 */}
+                        <button
+                            className="gb-header-nav-link"
+                            style={{ color: 'var(--color-text-tertiary)' }}
+                            title="로그아웃"
+                        >
+                            <LogOut style={{ width: 16, height: 16 }} />
+                            <span className="gb-hide-mobile">로그아웃</span>
+                        </button>
+                    </div>
+
+                    {/* Mobile hamburger */}
+                    <button
+                        className="gb-header-icon-btn gb-hide-desktop"
+                        onClick={() => setMobileOpen(!mobileOpen)}
+                    >
+                        {mobileOpen ? <X style={{ width: 20, height: 20 }} /> : <Menu style={{ width: 20, height: 20 }} />}
+                    </button>
+                </div>
+
+                {/* Mobile Menu */}
+                {mobileOpen && (
+                    <div style={{ borderTop: '1px solid var(--color-border-light)', paddingBottom: 'var(--space-3)', paddingTop: 'var(--space-2)' }} className="gb-hide-desktop">
+                        <nav style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)', padding: '0 var(--space-4)' }}>
                             {navItems.map((item) => (
                                 <Link
                                     key={item.href}
                                     href={item.href}
-                                    className={cn(
-                                        "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-                                        isActive(item.href)
-                                            ? "text-primary bg-primary/10"
-                                            : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                                    )}
+                                    onClick={() => setMobileOpen(false)}
+                                    className={`gb-header-nav-link${isActive(item.href) ? " active" : ""}`}
+                                    style={{ padding: 'var(--space-2) var(--space-3)' }}
                                 >
-                                    <item.icon className="h-4 w-4" />
+                                    <item.icon style={{ width: 16, height: 16 }} />
                                     {item.title}
                                 </Link>
                             ))}
                         </nav>
-
-                        {/* Right: Icon buttons */}
-                        <div className="hidden md:flex items-center gap-1">
-                            {/* 결제 */}
-                            <button
-                                className="relative flex h-9 w-9 items-center justify-center rounded-full text-primary hover:bg-primary/10 transition-colors"
-                                title="결제"
-                            >
-                                <WonCircle className="h-5 w-5" />
-                            </button>
-                            {/* 알림 */}
-                            <Link
-                                href="/notifications"
-                                className="relative flex h-9 w-9 items-center justify-center rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors"
-                                title="알림"
-                            >
-                                <Bell className="h-5 w-5" />
-                            </Link>
-                            {/* 계정연동 */}
-                            <button
-                                className="relative flex h-9 w-9 items-center justify-center rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors"
-                                title="계정연동"
-                            >
-                                <Users className="h-5 w-5" />
-                            </button>
-                            {/* 로그아웃 */}
-                            <button
-                                className="ml-1 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-red-500 hover:bg-gray-100 transition-colors"
-                                title="로그아웃"
-                            >
-                                <LogOut className="h-4 w-4" />
-                                <span className="hidden lg:inline">로그아웃</span>
+                        <div style={{ marginTop: 'var(--space-3)', borderTop: '1px solid var(--color-border-light)', paddingTop: 'var(--space-3)', padding: '0 var(--space-4)' }}>
+                            <button className="gb-header-nav-link" style={{ width: '100%', color: 'var(--color-text-tertiary)' }}>
+                                <LogOut style={{ width: 16, height: 16 }} />
+                                로그아웃
                             </button>
                         </div>
-
-                        {/* Mobile hamburger */}
-                        <button
-                            className="flex md:hidden p-2 text-gray-500 hover:text-gray-900"
-                            onClick={() => setMobileOpen(!mobileOpen)}
-                        >
-                            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-                        </button>
                     </div>
-
-                    {/* Mobile Menu */}
-                    {mobileOpen && (
-                        <div className="md:hidden border-t border-gray-200 pb-3 pt-2">
-                            <nav className="space-y-1">
-                                {navItems.map((item) => (
-                                    <Link
-                                        key={item.href}
-                                        href={item.href}
-                                        onClick={() => setMobileOpen(false)}
-                                        className={cn(
-                                            "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                                            isActive(item.href)
-                                                ? "text-primary bg-primary/10"
-                                                : "text-gray-600 hover:bg-gray-100"
-                                        )}
-                                    >
-                                        <item.icon className="h-4 w-4" />
-                                        {item.title}
-                                    </Link>
-                                ))}
-                            </nav>
-                            <div className="mt-3 border-t border-gray-100 pt-3 px-3">
-                                <button className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-500 hover:bg-gray-100">
-                                    <LogOut className="h-4 w-4" />
-                                    로그아웃
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                </div>
+                )}
             </header>
         </>
     );

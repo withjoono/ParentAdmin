@@ -1,32 +1,9 @@
 /* ============================================================
  * 거북스쿨 디자인 시스템 — 토스 스타일 공통 컴포넌트
+ * ============================================================
+ * NOTE: CSS Reset & body 스타일은 Tailwind CSS가 처리하므로
+ * 여기서는 컴포넌트 클래스만 정의합니다.
  * ============================================================ */
-
-/* ═══════════════════════════════════════════
- * RESET & BASE
- * ═══════════════════════════════════════════ */
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html {
-    font-size: 16px;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-body {
-    font-family: var(--font-family);
-    font-size: var(--text-base);
-    line-height: var(--leading-normal);
-    color: var(--color-text);
-    background-color: var(--color-bg);
-    letter-spacing: var(--tracking-tight);
-}
 
 /* ═══════════════════════════════════════════
  * HEADER — 토스 스타일 상단바
