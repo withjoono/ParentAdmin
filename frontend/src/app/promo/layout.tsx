@@ -1,0 +1,11 @@
+export default function PromoLayout({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
+    return (
+        <div className="min-h-screen flex flex-col">
+            {children}
+        </div>
+    );
+}
