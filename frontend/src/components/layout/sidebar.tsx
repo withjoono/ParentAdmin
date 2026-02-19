@@ -55,10 +55,10 @@ export function Sidebar() {
                         {/* Left: Logo */}
                         <div className="flex items-center gap-3">
                             <Link href="/" className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
-                                <div className="flex h-7 w-7 items-center justify-center rounded-md bg-emerald-600">
+                                <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary">
                                     <span className="text-xs font-bold text-white">P</span>
                                 </div>
-                                <span className="text-[15px] font-bold tracking-tight text-emerald-600">
+                                <span className="text-[15px] font-bold tracking-tight text-primary">
                                     Parent Admin
                                 </span>
                             </Link>
@@ -73,7 +73,7 @@ export function Sidebar() {
                                     className={cn(
                                         "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
                                         isActive(item.href)
-                                            ? "text-emerald-600 bg-emerald-50"
+                                            ? "text-primary bg-primary/10"
                                             : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                                     )}
                                 >
@@ -138,7 +138,7 @@ export function Sidebar() {
                                         className={cn(
                                             "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                                             isActive(item.href)
-                                                ? "text-emerald-600 bg-emerald-50"
+                                                ? "text-primary bg-primary/10"
                                                 : "text-gray-600 hover:bg-gray-100"
                                         )}
                                     >
