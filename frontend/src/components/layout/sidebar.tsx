@@ -11,6 +11,10 @@ import {
     LogOut,
     Menu,
     X,
+    Clock,
+    TrendingUp,
+    MessageCircle,
+    FileText,
 } from "lucide-react";
 import { WonCircle } from "@/components/icons";
 import { cn } from "@/lib/utils";
@@ -28,9 +32,24 @@ const navItems: NavItem[] = [
         icon: LayoutDashboard,
     },
     {
-        title: "수업 현황",
-        href: "/class-status",
-        icon: BookOpen,
+        title: "학습 타임라인",
+        href: "/tutor/timeline",
+        icon: Clock,
+    },
+    {
+        title: "성적 추이",
+        href: "/tutor/test-trend",
+        icon: TrendingUp,
+    },
+    {
+        title: "선생님 대화",
+        href: "/tutor/comments",
+        icon: MessageCircle,
+    },
+    {
+        title: "수업 기록",
+        href: "/tutor/class-records",
+        icon: FileText,
     },
     {
         title: "알림",

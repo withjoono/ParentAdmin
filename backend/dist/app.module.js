@@ -9,10 +9,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
-const typeorm_1 = require("@nestjs/typeorm");
-const app_controller_1 = require("./app.controller");
-const app_service_1 = require("./app.service");
-const typeorm_config_service_1 = require("./typeorm-config.service");
+const auth_module_1 = require("./auth/auth.module");
+const prisma_module_1 = require("./prisma/prisma.module");
+const tutor_module_1 = require("./tutor/tutor.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -21,14 +20,12 @@ exports.AppModule = AppModule = __decorate([
         imports: [
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
-                envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
+                envFilePath: ['.env.local', '.env'],
             }),
-            typeorm_1.TypeOrmModule.forRootAsync({
-                useClass: typeorm_config_service_1.TypeOrmConfigService,
-            }),
+            auth_module_1.AuthModule,
+            prisma_module_1.PrismaModule,
+            tutor_module_1.TutorModule,
         ],
-        controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService, typeorm_config_service_1.TypeOrmConfigService],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map
