@@ -375,8 +375,8 @@ export default function PromoPage() {
                                 <div
                                     key={student.name}
                                     className={`relative rounded-xl border p-4 text-center transition-all hover:scale-[1.03] ${student.rank === 1
-                                            ? "border-amber-400/40 bg-amber-500/10"
-                                            : "border-white/10 bg-white/5"
+                                        ? "border-amber-400/40 bg-amber-500/10"
+                                        : "border-white/10 bg-white/5"
                                         }`}
                                 >
                                     {student.rank === 1 && (
@@ -533,6 +533,171 @@ export default function PromoPage() {
                             <div className="mt-5 flex items-center justify-center gap-1.5 rounded-lg bg-white/5 border border-white/5 py-2 text-xs text-white/30">
                                 <Shield className="h-3 w-3" />
                                 이 대화는 자녀에게 보이지 않습니다
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ═══════════════════════════════════════
+                FEATURE ④ — 튜터보드 연동
+                ═══════════════════════════════════════ */}
+            <section className="relative overflow-hidden bg-gradient-to-b from-[#0f0a1a] to-[#150f25] text-white py-24 sm:py-32">
+                <div className="pointer-events-none absolute inset-0">
+                    <div className="absolute top-1/4 left-0 h-[350px] w-[350px] rounded-full bg-indigo-600/10 blur-[120px]" />
+                    <div className="absolute bottom-0 right-1/4 h-[300px] w-[300px] rounded-full bg-cyan-500/8 blur-[100px]" />
+                </div>
+
+                <div className="relative mx-auto max-w-screen-lg px-6">
+                    <div className="scroll-reveal flex items-center gap-2 text-indigo-400 text-sm font-bold uppercase tracking-widest mb-4">
+                        <BookOpen className="h-4 w-4" />
+                        Feature 04
+                    </div>
+
+                    <h2 className="scroll-reveal text-3xl sm:text-4xl font-extrabold leading-tight">
+                        튜터보드와 연동하여
+                        <br className="hidden sm:block" />
+                        <span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">수업 기록을 한눈에</span>
+                    </h2>
+
+                    <p className="scroll-reveal mt-4 max-w-lg text-white/50 text-base leading-relaxed">
+                        선생님이 기록한 수업 내용, 출결, 과제, 시험 결과를
+                        학부모도 실시간으로 확인할 수 있어요.
+                        학습 타임라인과 성적 추이 그래프로 자녀의 성장을 추적하세요.
+                    </p>
+
+                    {/* 4-grid feature cards */}
+                    <div className="scroll-reveal mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <FeatureCard
+                            icon={Eye}
+                            title="대시보드"
+                            desc="자녀별 수업 현황, 오늘 출결, 미제출 과제를 카드 형태로 한눈에 확인"
+                            color="bg-gradient-to-br from-indigo-500 to-blue-600"
+                        />
+                        <FeatureCard
+                            icon={Clock}
+                            title="학습 타임라인"
+                            desc="수업 · 시험 · 과제를 시간순으로 통합 표시, 타입별 아이콘과 필터 제공"
+                            color="bg-gradient-to-br from-cyan-500 to-teal-600"
+                        />
+                        <FeatureCard
+                            icon={Target}
+                            title="성적 추이"
+                            desc="과목별 꺾은선 그래프로 성적 변화를 추적, 평균 · 최고 · 최저 표시"
+                            color="bg-gradient-to-br from-violet-500 to-purple-600"
+                        />
+                        <FeatureCard
+                            icon={BookOpen}
+                            title="수업 기록 열람"
+                            desc="날짜별 출결, 수업 내용, 과제 결과, 테스트 점수를 테이블로 조회"
+                            color="bg-gradient-to-br from-pink-500 to-rose-600"
+                        />
+                    </div>
+
+                    {/* Mock dashboard preview */}
+                    <div className="scroll-reveal mt-12 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-6 sm:p-8">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-600">
+                                <Eye className="h-5 w-5 text-white" />
+                            </div>
+                            <div>
+                                <p className="text-sm font-bold text-white">학부모 대시보드</p>
+                                <p className="text-xs text-white/40">자녀 현황 요약</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            {[
+                                { label: "등록 자녀", value: "2명", color: "from-indigo-500/20 to-blue-500/20", border: "border-indigo-500/30" },
+                                { label: "미제출 과제", value: "3건", color: "from-amber-500/20 to-orange-500/20", border: "border-amber-500/30" },
+                                { label: "총 수업", value: "5개", color: "from-emerald-500/20 to-teal-500/20", border: "border-emerald-500/30" },
+                            ].map((stat) => (
+                                <div
+                                    key={stat.label}
+                                    className={`rounded-xl bg-gradient-to-br ${stat.color} border ${stat.border} p-4 text-center`}
+                                >
+                                    <p className="text-xs text-white/50">{stat.label}</p>
+                                    <p className="text-2xl font-extrabold text-white mt-1">{stat.value}</p>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Mock child cards */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {[
+                                {
+                                    name: "민준",
+                                    classes: ["수학 A반", "영어 기초"],
+                                    attendance: "출석",
+                                    pending: 1,
+                                },
+                                {
+                                    name: "서연",
+                                    classes: ["수학 B반", "국어 심화", "과학 실험"],
+                                    attendance: "출석",
+                                    pending: 2,
+                                },
+                            ].map((child) => (
+                                <div
+                                    key={child.name}
+                                    className="rounded-xl border border-white/10 bg-white/5 p-4"
+                                >
+                                    <div className="flex items-center justify-between mb-3">
+                                        <div className="flex items-center gap-2">
+                                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-500/20 border border-indigo-500/30 text-xs font-bold text-indigo-300">
+                                                {child.name[0]}
+                                            </div>
+                                            <span className="text-sm font-bold text-white">{child.name}</span>
+                                        </div>
+                                        {child.pending > 0 && (
+                                            <span className="text-[10px] font-medium bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full">
+                                                미제출 {child.pending}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        {child.classes.map((cls) => (
+                                            <div
+                                                key={cls}
+                                                className="flex items-center justify-between text-xs px-2 py-1.5 rounded-lg bg-white/5"
+                                            >
+                                                <span className="text-white/70">{cls}</span>
+                                                <span className="text-emerald-400 text-[10px]">✓ {child.attendance}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Mock chart preview */}
+                        <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4">
+                            <div className="flex items-center gap-2 mb-4">
+                                <Target className="h-4 w-4 text-violet-400" />
+                                <p className="text-sm font-bold text-white">성적 추이</p>
+                                <span className="text-xs text-white/30 ml-auto">민준 · 수학 A반</span>
+                            </div>
+                            {/* Fake chart using bars */}
+                            <div className="flex items-end gap-2 h-24">
+                                {[68, 72, 75, 70, 82, 88, 85, 92].map((score, i) => (
+                                    <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                                        <span className="text-[9px] text-white/30">{score}</span>
+                                        <div
+                                            className="w-full rounded-t-md bg-gradient-to-t from-indigo-500/60 to-cyan-400/60 transition-all"
+                                            style={{ height: `${score * 0.8}%` }}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="flex justify-between text-[9px] text-white/20 mt-1 px-1">
+                                <span>3월</span>
+                                <span>4월</span>
+                                <span>5월</span>
+                                <span>6월</span>
+                                <span>7월</span>
+                                <span>8월</span>
+                                <span>9월</span>
+                                <span>10월</span>
                             </div>
                         </div>
                     </div>
