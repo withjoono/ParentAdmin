@@ -15,8 +15,10 @@ import {
     TrendingUp,
     MessageCircle,
     FileText,
+    ChevronDown,
 } from "lucide-react";
 import { WonCircle } from "@/components/icons";
+import { config } from "@/lib/config";
 
 interface NavItem {
     title: string;
@@ -60,6 +62,7 @@ const navItems: NavItem[] = [
 export function Sidebar() {
     const pathname = usePathname();
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [userOpen, setUserOpen] = useState(false);
 
     const isActive = (href: string) =>
         href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -94,13 +97,16 @@ export function Sidebar() {
                     {/* Right: Icon buttons */}
                     <div className="gb-header-actions gb-hide-mobile">
                         {/* 결제 */}
-                        <button
+                        <a
+                            href={`${config.hubUrl}/products`}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="gb-header-icon-btn"
                             style={{ color: 'var(--color-primary)' }}
-                            title="결제"
+                            title="이용권 구매"
                         >
                             <WonCircle style={{ width: 20, height: 20 }} />
-                        </button>
+                        </a>
                         {/* 알림 */}
                         <Link
                             href="/notifications"
@@ -110,21 +116,36 @@ export function Sidebar() {
                             <Bell style={{ width: 20, height: 20 }} />
                         </Link>
                         {/* 계정연동 */}
-                        <button
+                        <a
+                            href={`${config.hubUrl}/account-linkage`}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="gb-header-icon-btn"
                             title="계정연동"
                         >
                             <Users style={{ width: 20, height: 20 }} />
-                        </button>
-                        {/* 로그아웃 */}
-                        <button
-                            className="gb-header-nav-link"
-                            style={{ color: 'var(--color-text-tertiary)' }}
-                            title="로그아웃"
-                        >
-                            <LogOut style={{ width: 16, height: 16 }} />
-                            <span className="gb-hide-mobile">로그아웃</span>
-                        </button>
+                        </a>
+                        {/* 사용자 드롭다운 */}
+                        <div className="gb-header-user-wrap">
+                            <button
+                                className="gb-header-user-trigger"
+                                onClick={() => setUserOpen(!userOpen)}
+                            >
+                                <span>학부모 님</span>
+                                <ChevronDown style={{ width: 14, height: 14 }} />
+                            </button>
+                            {userOpen && (
+                                <>
+                                    <div className="gb-header-user-backdrop" onClick={() => setUserOpen(false)} />
+                                    <div className="gb-header-user-popover">
+                                        <a href={`${config.hubUrl}/users/profile`} target="_blank" rel="noopener noreferrer">마이 페이지</a>
+                                        <a href={`${config.hubUrl}/users/payment`} target="_blank" rel="noopener noreferrer">결제내역</a>
+                                        <div className="gb-header-user-popover-divider" />
+                                        <button className="gb-logout-btn" onClick={() => { setUserOpen(false); /* TODO: logout */ }}>로그아웃</button>
+                                    </div>
+                                </>
+                            )}
+                        </div>
                     </div>
 
                     {/* Mobile hamburger */}
@@ -154,7 +175,13 @@ export function Sidebar() {
                             ))}
                         </nav>
                         <div style={{ marginTop: 'var(--space-3)', borderTop: '1px solid var(--color-border-light)', paddingTop: 'var(--space-3)', padding: '0 var(--space-4)' }}>
-                            <button className="gb-header-nav-link" style={{ width: '100%', color: 'var(--color-text-tertiary)' }}>
+                            <a href={`${config.hubUrl}/users/profile`} target="_blank" rel="noopener noreferrer" className="gb-header-nav-link" style={{ width: '100%' }}>
+                                마이 페이지
+                            </a>
+                            <a href={`${config.hubUrl}/users/payment`} target="_blank" rel="noopener noreferrer" className="gb-header-nav-link" style={{ width: '100%' }}>
+                                결제내역
+                            </a>
+                            <button className="gb-header-nav-link" style={{ width: '100%', color: 'var(--color-error, #ef4444)' }}>
                                 <LogOut style={{ width: 16, height: 16 }} />
                                 로그아웃
                             </button>
