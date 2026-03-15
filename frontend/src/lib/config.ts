@@ -15,6 +15,15 @@ export const config = {
     hubUrl: process.env.NEXT_PUBLIC_HUB_URL || "http://localhost:3000",
     hubApiUrl: process.env.NEXT_PUBLIC_HUB_API_URL || "http://localhost:4000",
 
+    // 연동 앱 URL 매핑
+    appUrls: {
+        studyplanner: isDev ? 'http://localhost:3004' : 'https://studyplanner-new.web.app',
+        examhub: isDev ? 'http://localhost:3003' : 'https://examhub-app.web.app',
+        mysanggibu: isDev ? 'http://localhost:3005' : 'https://ms-front.web.app',
+        susi: isDev ? 'http://localhost:3001' : 'https://susi-front.web.app',
+        jungsi: isDev ? 'http://localhost:3002' : 'https://jungsi-front.web.app',
+    } as Record<string, string>,
+
     // 환경
     isDevelopment: isDev,
     isProduction: !isDev,

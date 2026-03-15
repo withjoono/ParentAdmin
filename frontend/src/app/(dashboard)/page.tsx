@@ -14,9 +14,12 @@ import {
     CheckCircle,
     Clock as ClockIcon,
     XCircle,
+    ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
 import { getTutorDashboard, type DashboardChild } from "@/lib/api/tutor";
+import { getLinkedAccounts, type LinkedAccount } from "@/lib/api/hub";
+import { APP_LABELS, openStudentApp } from "@/lib/app-viewer";
 
 // ==================== 컴포넌트 ====================
 
@@ -33,7 +36,7 @@ function AttendanceIcon({ status }: { status: string }) {
     }
 }
 
-function ChildCard({ child }: { child: DashboardChild }) {
+function ChildCard({ child, sharedApps }: { child: DashboardChild; sharedApps: string[] }) {
     return (
         <Card className="group hover:shadow-lg transition-all duration-300 hover:border-primary/30">
             <CardHeader className="pb-3">
@@ -135,6 +138,30 @@ function ChildCard({ child }: { child: DashboardChild }) {
                     </span>
                 </div>
 
+                {/* 자녀 앱 열기 */}
+                {sharedApps.length > 0 && (
+                    <div className="space-y-2 pt-2">
+                        <p className="text-xs font-medium text-muted-foreground">앱 열기</p>
+                        <div className="flex flex-wrap gap-1.5">
+                            {sharedApps.map((appKey) => {
+                                const label = APP_LABELS[appKey];
+                                return (
+                                    <button
+                                        key={appKey}
+                                        onClick={() => openStudentApp(appKey, child.student.id)}
+                                        className="inline-flex items-center gap-1.5 rounded-lg border bg-card px-2.5 py-1.5 text-xs font-medium shadow-sm hover:bg-accent hover:shadow-md transition-all"
+                                        title={`${label?.name || appKey}을(를) 자녀 시점으로 열기`}
+                                    >
+                                        <span>{label?.emoji || '📱'}</span>
+                                        <span>{label?.name || appKey}</span>
+                                        <ExternalLink className="w-3 h-3 opacity-50" />
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
+
                 {/* 상세보기 버튼들 */}
                 <div className="grid grid-cols-2 gap-2 pt-2">
                     <Link href={`/tutor/timeline?childId=${child.student.id}`}>
@@ -165,6 +192,7 @@ export default function DashboardPage() {
     const [children, setChildren] = useState<DashboardChild[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState(0);
+    const [sharedAppsMap, setSharedAppsMap] = useState<Record<string, string[]>>({});
 
     useEffect(() => {
         async function fetchDashboard() {
@@ -172,6 +200,20 @@ export default function DashboardPage() {
                 setLoading(true);
                 const data = await getTutorDashboard();
                 setChildren(data.children || []);
+
+                // 공유 앱 목록 조회 (Hub API)
+                try {
+                    const links = await getLinkedAccounts();
+                    const map: Record<string, string[]> = {};
+                    (Array.isArray(links) ? links : []).forEach((link: LinkedAccount) => {
+                        if (link.partnerType === 'student' && link.sharedApps?.length) {
+                            map[link.partnerId] = link.sharedApps;
+                        }
+                    });
+                    setSharedAppsMap(map);
+                } catch {
+                    // Hub API 실패해도 기본 기능 유지
+                }
             } catch (err) {
                 console.error("Failed to fetch dashboard:", err);
                 setChildren([]);
@@ -277,9 +319,9 @@ export default function DashboardPage() {
                 </h2>
                 {children.length > 1 ? (
                     // 탭 모드: 선택된 자녀만 표시
-                    <ChildCard child={children[activeTab]} />
+                    <ChildCard child={children[activeTab]} sharedApps={sharedAppsMap[children[activeTab]?.student.id] || []} />
                 ) : children.length === 1 ? (
-                    <ChildCard child={children[0]} />
+                    <ChildCard child={children[0]} sharedApps={sharedAppsMap[children[0]?.student.id] || []} />
                 ) : (
                     <div className="text-center text-sm text-muted-foreground py-8">
                         등록된 자녀 정보가 없습니다
