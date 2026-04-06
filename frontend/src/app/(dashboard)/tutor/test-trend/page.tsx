@@ -9,7 +9,7 @@ import {
     ArrowDown,
     Minus,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "geobuk-shared/ui";
 import { Select } from "@/components/ui/select";
 import {
     LineChart,
@@ -322,3 +322,4 @@ export default function TestTrendPage() {
         </div>
     );
 }
+

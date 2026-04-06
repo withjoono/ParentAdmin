@@ -9,7 +9,7 @@ import {
     Filter,
     Loader2,
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "geobuk-shared/ui";
 import { Badge } from "@/components/ui/badge";
 import { Select } from "@/components/ui/select";
 import {
@@ -268,3 +268,4 @@ export default function TimelinePage() {
         </div>
     );
 }
+

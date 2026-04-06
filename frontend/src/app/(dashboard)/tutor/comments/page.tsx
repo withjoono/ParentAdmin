@@ -7,9 +7,9 @@ import {
     Loader2,
     User,
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "geobuk-shared/ui";
 import { Select } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+import { Button } from "geobuk-shared/ui";
 import {
     getPrivateComments,
     postPrivateComment,
@@ -247,3 +247,4 @@ export default function CommentsPage() {
         </div>
     );
 }
+

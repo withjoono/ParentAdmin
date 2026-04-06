@@ -1,4 +1,5 @@
 import { config } from './config';
+import { clearTokens, getAccessToken as geobukGetAccessToken, hasAccessToken, setTokens } from 'geobuk-shared/auth';
 
 const HUB_URL = config.hubUrl;
 const HUB_API_URL = config.hubApiUrl;
@@ -10,17 +11,16 @@ export function redirectToLogin() {
 }
 
 export function logout() {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    clearTokens();
     window.location.reload();
 }
 
 export function isLoggedIn(): boolean {
-    return !!localStorage.getItem('accessToken');
+    return hasAccessToken();
 }
 
 export function getAccessToken(): string | null {
-    return localStorage.getItem('accessToken');
+    return geobukGetAccessToken();
 }
 
 /**
@@ -46,10 +46,7 @@ export async function processSSOLogin(): Promise<boolean> {
         const data = result.data || result;
 
         if (data.accessToken) {
-            localStorage.setItem('accessToken', data.accessToken);
-            if (data.refreshToken) {
-                localStorage.setItem('refreshToken', data.refreshToken);
-            }
+            setTokens(data.accessToken, data.refreshToken || '');
 
             // Clean up URL
             const url = new URL(window.location.href);

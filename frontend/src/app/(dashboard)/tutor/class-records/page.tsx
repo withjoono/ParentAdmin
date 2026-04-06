@@ -10,7 +10,7 @@ import {
     FileText,
     ClipboardCheck,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "geobuk-shared/ui";
 import { Badge } from "@/components/ui/badge";
 import { Select } from "@/components/ui/select";
 import {
@@ -301,3 +301,4 @@ export default function ClassRecordsPage() {
         </div>
     );
 }
+

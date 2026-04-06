@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "geobuk-shared/ui";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button } from "geobuk-shared/ui";
 import {
     BookOpen,
     FileText,
@@ -367,3 +367,4 @@ export default function DashboardPage() {
         </div>
     );
 }
+
