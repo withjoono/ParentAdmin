@@ -5,15 +5,15 @@
 const isDev = process.env.NODE_ENV === "development";
 
 export const config = {
-    // TutorBoard Backend API URL
-    apiUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:4005",
+    // ParentAdmin Backend API URL
+    apiUrl: process.env.NEXT_PUBLIC_API_URL || (isDev ? 'http://localhost:4005' : 'https://ts-back-nest-479305.du.r.appspot.com'),
 
     // Frontend URL
-    frontUrl: process.env.NEXT_PUBLIC_FRONT_URL || "http://localhost:3019",
+    frontUrl: process.env.NEXT_PUBLIC_FRONT_URL || (isDev ? 'http://localhost:3019' : 'https://parent-admin-front.web.app'),
 
     // Hub SSO URLs
-    hubUrl: process.env.NEXT_PUBLIC_HUB_URL || "http://localhost:3000",
-    hubApiUrl: process.env.NEXT_PUBLIC_HUB_API_URL || "http://localhost:4000",
+    hubUrl: process.env.NEXT_PUBLIC_HUB_URL || (isDev ? 'http://localhost:3000' : 'https://www.tskool.kr'),
+    hubApiUrl: process.env.NEXT_PUBLIC_HUB_API_URL || (isDev ? 'http://localhost:4000' : 'https://ts-back-nest-479305.du.r.appspot.com'),
 
     // 연동 앱 URL 매핑
     appUrls: {

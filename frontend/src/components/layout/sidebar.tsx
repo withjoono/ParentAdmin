@@ -33,16 +33,6 @@ const navItems: NavItem[] = [
         icon: LayoutDashboard,
     },
     {
-        title: "학습 타임라인",
-        href: "/tutor/timeline",
-        icon: Clock,
-    },
-    {
-        title: "성적 추이",
-        href: "/tutor/test-trend",
-        icon: TrendingUp,
-    },
-    {
         title: "선생님 대화",
         href: "/tutor/comments",
         icon: MessageCircle,
@@ -51,11 +41,6 @@ const navItems: NavItem[] = [
         title: "수업 기록",
         href: "/tutor/class-records",
         icon: FileText,
-    },
-    {
-        title: "알림",
-        href: "/notifications",
-        icon: Bell,
     },
 ];
 
