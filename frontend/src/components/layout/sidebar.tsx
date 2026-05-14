@@ -6,8 +6,8 @@ import { useState } from "react";
 import {
     LayoutDashboard,
     BookOpen,
-    Bell,
-    Users,
+    BellRing,
+    Link2,
     LogOut,
     Menu,
     X,
@@ -16,8 +16,8 @@ import {
     MessageCircle,
     FileText,
     ChevronDown,
+    CreditCard,
 } from "lucide-react";
-import { WonCircle } from "@/components/icons";
 import { config } from "@/lib/config";
 
 interface NavItem {
@@ -90,7 +90,7 @@ export function Sidebar() {
                             style={{ color: 'var(--color-primary)' }}
                             title="이용권 구매"
                         >
-                            <WonCircle style={{ width: 20, height: 20 }} />
+                            <CreditCard style={{ width: 20, height: 20 }} />
                         </a>
                         {/* 알림 */}
                         <Link
@@ -98,7 +98,7 @@ export function Sidebar() {
                             className="gb-header-icon-btn"
                             title="알림"
                         >
-                            <Bell style={{ width: 20, height: 20 }} />
+                            <BellRing style={{ width: 20, height: 20 }} />
                         </Link>
                         {/* 계정연동 */}
                         <a
@@ -108,7 +108,7 @@ export function Sidebar() {
                             className="gb-header-icon-btn"
                             title="계정연동"
                         >
-                            <Users style={{ width: 20, height: 20 }} />
+                            <Link2 style={{ width: 20, height: 20 }} />
                         </a>
                         {/* 사용자 드롭다운 */}
                         <div className="gb-header-user-wrap">
