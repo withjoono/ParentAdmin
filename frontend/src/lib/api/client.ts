@@ -101,7 +101,10 @@ authClient.interceptors.response.use(
             if (!refreshToken) {
                 tokenManager.clearTokens();
                 if (typeof window !== "undefined") {
-                    redirectToLogin();
+                    const hasSSOInProgress = new URLSearchParams(window.location.search).has('sso_code');
+                    if (!hasSSOInProgress) {
+                        redirectToLogin();
+                    }
                 }
                 return Promise.reject(error);
             }
