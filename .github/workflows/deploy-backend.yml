@@ -35,7 +35,7 @@ jobs:
 
       - name: Build
         working-directory: backend
-        run: npm run build
+        run: npx nest build
 
       - name: Deploy to App Engine
         working-directory: backend
