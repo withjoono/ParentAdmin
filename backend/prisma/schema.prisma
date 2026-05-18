@@ -91,7 +91,7 @@ enum AttendanceStatus {
 
 model TbUser {
   id         String   @id @default(uuid())
-  hubUserId  Int?     @unique @map("hub_user_id")
+  hubUserId  String?  @unique @map("hub_user_id") @db.VarChar(30)
   username   String
   email      String   @unique
   role       UserRole

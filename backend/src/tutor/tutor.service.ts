@@ -7,15 +7,14 @@ export class TutorService {
 
     // ===== HELPER: Hub ID → TbUser 변환 =====
     private async resolveParent(hubId: string) {
-        const hubUserId = parseInt(hubId, 10);
         let user = await this.prisma.tbUser.findUnique({
-            where: { hubUserId },
+            where: { hubUserId: hubId },
         });
 
         if (!user) {
             user = await this.prisma.tbUser.create({
                 data: {
-                    hubUserId,
+                    hubUserId: hubId,
                     username: `parent_${hubId}`,
                     email: `parent_${hubId}@tutorboard.local`,
                     role: 'parent',
