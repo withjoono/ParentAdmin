@@ -35,7 +35,7 @@ jobs:
 
       - name: Build
         working-directory: backend
-        run: npx nest build
+        run: node node_modules/@nestjs/cli/bin/nest.js build
 
       - name: Deploy to App Engine
         working-directory: backend
