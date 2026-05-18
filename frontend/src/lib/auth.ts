@@ -34,10 +34,10 @@ export async function processSSOLogin(): Promise<boolean> {
     if (!ssoCode) return false;
 
     try {
-        const response = await fetch(`${config.hubApiUrl}/auth/sso/exchange`, {
+        const response = await fetch(`${config.hubApiUrl}/auth/sso/verify-code`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ code: ssoCode }),
+            body: JSON.stringify({ code: ssoCode, serviceId: SERVICE_ID }),
         });
 
         if (!response.ok) return false;
