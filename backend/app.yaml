@@ -1,4 +1,4 @@
-runtime: nodejs20
+runtime: nodejs22
 service: parent-admin
 instance_class: F1
 automatic_scaling:
