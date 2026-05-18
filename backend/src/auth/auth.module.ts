@@ -10,12 +10,16 @@ import { JwtStrategy } from './jwt.strategy';
         JwtModule.registerAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
-            useFactory: (configService: ConfigService) => ({
-                secret: configService.get('AUTH_SECRET') || 'parent-admin-secret-key',
-                signOptions: {
-                    expiresIn: '2h',
-                },
-            }),
+            useFactory: (configService: ConfigService) => {
+                const secret = configService.get<string>('AUTH_SECRET') || 'parent-admin-secret-key';
+                return {
+                    secret: Buffer.from(secret, 'base64'),
+                    signOptions: {
+                        expiresIn: '2h',
+                        algorithm: 'HS512' as const,
+                    },
+                };
+            },
         }),
     ],
     providers: [JwtStrategy],

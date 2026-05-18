@@ -5,14 +5,17 @@ const HUB_URL = config.hubUrl;
 const HUB_API_URL = config.hubApiUrl;
 const SERVICE_ID = 'parentadmin';
 
-export function redirectToLogin() {
-    const currentUrl = window.location.href;
-    window.location.href = `${HUB_URL}/auth/login?redirect=${encodeURIComponent(currentUrl)}`;
+export function redirectToLogin(forceLogin = false) {
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.delete('sso_code');
+    const params = new URLSearchParams({ redirect: currentUrl.toString() });
+    if (forceLogin) params.set('force_login', 'true');
+    window.location.href = `${HUB_URL}/auth/login?${params.toString()}`;
 }
 
 export function logout() {
     clearTokens();
-    redirectToLogin();
+    redirectToLogin(true);
 }
 
 export function isLoggedIn(): boolean {

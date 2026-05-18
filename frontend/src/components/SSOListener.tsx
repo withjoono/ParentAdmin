@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { processSSOLogin } from '@/lib/auth';
+import { processSSOLogin, redirectToLogin } from '@/lib/auth';
 
 export function SSOListener() {
     const [isSSOLoading, setIsSSOLoading] = useState(false);
@@ -15,6 +15,9 @@ export function SSOListener() {
             if (loggedIn) {
                 console.log('[SSO] 로그인 성공');
                 window.location.reload();
+            } else {
+                // SSO 교환 실패 - Hub 로그인 폼으로 이동 (자동 SSO 루프 방지)
+                redirectToLogin(true);
             }
             setIsSSOLoading(false);
         });
