@@ -12,7 +12,7 @@ export function redirectToLogin() {
 
 export function logout() {
     clearTokens();
-    window.location.reload();
+    redirectToLogin();
 }
 
 export function isLoggedIn(): boolean {

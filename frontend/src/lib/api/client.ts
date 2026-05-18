@@ -6,6 +6,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { getAccessToken, getRefreshToken, setTokens, clearTokens, hasTokens as geobukHasTokens } from 'geobuk-shared/auth';
 import { config } from "../config";
+import { redirectToLogin } from "../auth";
 
 /**
  * Public API Client (인증 불필요)
@@ -100,7 +101,7 @@ authClient.interceptors.response.use(
             if (!refreshToken) {
                 tokenManager.clearTokens();
                 if (typeof window !== "undefined") {
-                    window.location.href = "/auth/login";
+                    redirectToLogin();
                 }
                 return Promise.reject(error);
             }
@@ -123,7 +124,7 @@ authClient.interceptors.response.use(
                 processQueue(refreshError, null);
                 tokenManager.clearTokens();
                 if (typeof window !== "undefined") {
-                    window.location.href = "/auth/login";
+                    redirectToLogin();
                 }
                 return Promise.reject(refreshError);
             } finally {
