@@ -22,6 +22,10 @@ export interface ChildInfo {
     progressRate?: number;
     pendingAssignments?: number;
     latestScore?: number;
+    latestScoreSubject?: string;
+    // 백엔드 응답 필드 (student 객체 포함)
+    student?: { id: string; username: string; avatarUrl: string | null };
+    classes?: { id: string; name: string }[];
 }
 
 export interface AttendanceRecord {
@@ -63,7 +67,7 @@ export interface PrivateComment {
 // ===== Dashboard =====
 
 export async function getDashboard(): Promise<ParentDashboard> {
-    const response = await authClient.get('/parent/dashboard');
+    const response = await authClient.get('/api/tutor/dashboard');
     return response.data;
 }
 

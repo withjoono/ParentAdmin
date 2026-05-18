@@ -65,28 +65,39 @@ export class TutorService {
             });
         }
 
-        // 각 자녀의 오늘 출결 + 미제출 과제 수
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
+        // 각 자녀의 미제출 과제 수 + 평균 진도율 + 최근 점수
         for (const [studentId, child] of childrenMap) {
-            const [todayAttendance, pendingCount] = await Promise.all([
-                this.prisma.tbAttendance.findMany({
-                    where: {
-                        studentId,
-                        date: { gte: today, lt: new Date(today.getTime() + 86400000) },
-                    },
-                    include: { class: { select: { name: true } } },
-                }),
+            const classIds = child.classes.map((c: any) => c.id);
+
+            const [pendingCount, lessonPlans, latestTestResult] = await Promise.all([
                 this.prisma.tbAssignmentSubmission.count({
-                    where: {
-                        studentId,
-                        status: 'pending',
+                    where: { studentId, status: 'pending' },
+                }),
+                this.prisma.tbLessonPlan.findMany({
+                    where: { classId: { in: classIds } },
+                    select: { progress: true },
+                }),
+                this.prisma.tbTestResult.findFirst({
+                    where: { studentId },
+                    orderBy: { takenAt: 'desc' },
+                    include: {
+                        test: {
+                            include: {
+                                lesson: {
+                                    include: { class: { select: { name: true } } },
+                                },
+                            },
+                        },
                     },
                 }),
             ]);
-            child.todayAttendance = todayAttendance;
+
             child.pendingAssignments = pendingCount;
+            child.progressRate = lessonPlans.length > 0
+                ? Math.round(lessonPlans.reduce((sum: number, lp: any) => sum + lp.progress, 0) / lessonPlans.length)
+                : 0;
+            child.latestScore = latestTestResult?.score ?? null;
+            child.latestScoreSubject = latestTestResult?.test?.lesson?.class?.name ?? null;
         }
 
         return { children: Array.from(childrenMap.values()) };
