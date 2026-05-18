@@ -4,13 +4,13 @@ import { useEffect, useState } from 'react';
 import { processSSOLogin } from '@/lib/auth';
 
 export function SSOListener() {
-    const [isSSOLoading, setIsSSOLoading] = useState(() => {
-        if (typeof window === 'undefined') return false;
-        const params = new URLSearchParams(window.location.search);
-        return !!params.get('sso_code');
-    });
+    const [isSSOLoading, setIsSSOLoading] = useState(false);
 
     useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        if (!params.get('sso_code')) return;
+
+        setIsSSOLoading(true);
         processSSOLogin().then((loggedIn) => {
             if (loggedIn) {
                 console.log('[SSO] 로그인 성공');

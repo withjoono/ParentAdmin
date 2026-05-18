@@ -34,7 +34,7 @@ export async function processSSOLogin(): Promise<boolean> {
     if (!ssoCode) return false;
 
     try {
-        const response = await fetch(`${config.apiUrl}/auth/sso/exchange`, {
+        const response = await fetch(`${config.hubApiUrl}/auth/sso/exchange`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ code: ssoCode }),

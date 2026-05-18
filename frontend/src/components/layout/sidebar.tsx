@@ -19,6 +19,7 @@ import {
     CreditCard,
 } from "lucide-react";
 import { config } from "@/lib/config";
+import { logout } from "@/lib/auth";
 
 interface NavItem {
     title: string;
@@ -126,7 +127,7 @@ export function Sidebar() {
                                         <a href={`${config.hubUrl}/users/profile`} target="_blank" rel="noopener noreferrer">마이 페이지</a>
                                         <a href={`${config.hubUrl}/users/payment`} target="_blank" rel="noopener noreferrer">결제내역</a>
                                         <div className="gb-header-user-popover-divider" />
-                                        <button className="gb-logout-btn" onClick={() => { setUserOpen(false); /* TODO: logout */ }}>로그아웃</button>
+                                        <button className="gb-logout-btn" onClick={() => { setUserOpen(false); logout(); }}>로그아웃</button>
                                     </div>
                                 </>
                             )}
@@ -166,7 +167,7 @@ export function Sidebar() {
                             <a href={`${config.hubUrl}/users/payment`} target="_blank" rel="noopener noreferrer" className="gb-header-nav-link" style={{ width: '100%' }}>
                                 결제내역
                             </a>
-                            <button className="gb-header-nav-link" style={{ width: '100%', color: 'var(--color-error, #ef4444)' }}>
+                            <button className="gb-header-nav-link" style={{ width: '100%', color: 'var(--color-error, #ef4444)' }} onClick={() => { setMobileOpen(false); logout(); }}>
                                 <LogOut style={{ width: 16, height: 16 }} />
                                 로그아웃
                             </button>

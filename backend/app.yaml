@@ -6,3 +6,11 @@ automatic_scaling:
   max_idle_instances: 1
   min_pending_latency: 3000ms
   max_pending_latency: automatic
+
+beta_settings:
+  cloud_sql_instances: ts-back-nest-479305:asia-northeast3:geobuk-db
+
+env_variables:
+  NODE_ENV: "production"
+  DATABASE_URL: "postgresql://tsuser:tsuser1234@/geobukschool_prod?host=/cloudsql/ts-back-nest-479305:asia-northeast3:geobuk-db&schema=tutorboard&search_path=tutorboard,hub"
+  AUTH_SECRET: "04ca023b39512e46d0c2cf4b48d5aac61d34302994c87ed4eff225dcf3b0a218739f3897051a057f9b846a69ea2927a587044164b7bae5e1306219d50b588cb1"
