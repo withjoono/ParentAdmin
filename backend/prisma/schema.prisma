@@ -6,7 +6,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["public", "hub"]
+  schemas  = ["tutorboard", "hub"]
 }
 
 // ===== HUB AUTH (읽기 전용) =====
@@ -49,7 +49,7 @@ enum UserRole {
   parent
   student
 
-  @@schema("public")
+  @@schema("tutorboard")
 }
 
 enum SubmissionStatus {
@@ -57,7 +57,7 @@ enum SubmissionStatus {
   submitted
   graded
 
-  @@schema("public")
+  @@schema("tutorboard")
 }
 
 enum PaymentStatus {
@@ -65,7 +65,7 @@ enum PaymentStatus {
   paid
   overdue
 
-  @@schema("public")
+  @@schema("tutorboard")
 }
 
 enum NotificationType {
@@ -76,7 +76,7 @@ enum NotificationType {
   comment
   general
 
-  @@schema("public")
+  @@schema("tutorboard")
 }
 
 enum AttendanceStatus {
@@ -84,7 +84,7 @@ enum AttendanceStatus {
   late
   absent
 
-  @@schema("public")
+  @@schema("tutorboard")
 }
 
 // ===== TUTORBOARD USERS =====
@@ -113,7 +113,7 @@ model TbUser {
   sentMessages         TbMessage[]
 
   @@map("tb_users")
-  @@schema("public")
+  @@schema("tutorboard")
 }
 
 // ===== TUTORBOARD CLASSES =====
@@ -136,7 +136,7 @@ model TbClass {
   attendances TbAttendance[]
 
   @@map("tb_classes")
-  @@schema("public")
+  @@schema("tutorboard")
 }
 
 model TbClassEnrollment {
@@ -152,7 +152,7 @@ model TbClassEnrollment {
 
   @@unique([classId, studentId])
   @@map("tb_class_enrollments")
-  @@schema("public")
+  @@schema("tutorboard")
 }
 
 // ===== TUTORBOARD LESSON PLANS & RECORDS =====
@@ -172,7 +172,7 @@ model TbLessonPlan {
   records     TbLessonRecord[]
 
   @@map("tb_lesson_plans")
-  @@schema("public")
+  @@schema("tutorboard")
 }
 
 model TbLessonRecord {
@@ -189,7 +189,7 @@ model TbLessonRecord {
   lessonPlan TbLessonPlan @relation(fields: [lessonPlanId], references: [id])
 
   @@map("tb_lesson_records")
-  @@schema("public")
+  @@schema("tutorboard")
 }
 
 // ===== TUTORBOARD ATTENDANCE =====
@@ -208,7 +208,7 @@ model TbAttendance {
 
   @@unique([classId, studentId, date])
   @@map("tb_attendances")
-  @@schema("public")
+  @@schema("tutorboard")
 }
 
 // ===== TUTORBOARD ASSIGNMENTS =====
@@ -226,7 +226,7 @@ model TbAssignment {
   submissions TbAssignmentSubmission[]
 
   @@map("tb_assignments")
-  @@schema("public")
+  @@schema("tutorboard")
 }
 
 model TbAssignmentSubmission {
@@ -244,7 +244,7 @@ model TbAssignmentSubmission {
 
   @@unique([assignmentId, studentId])
   @@map("tb_assignment_submissions")
-  @@schema("public")
+  @@schema("tutorboard")
 }
 
 // ===== TUTORBOARD TESTS =====
@@ -262,7 +262,7 @@ model TbTest {
   results TbTestResult[]
 
   @@map("tb_tests")
-  @@schema("public")
+  @@schema("tutorboard")
 }
 
 model TbTestResult {
@@ -279,7 +279,7 @@ model TbTestResult {
 
   @@unique([testId, studentId])
   @@map("tb_test_results")
-  @@schema("public")
+  @@schema("tutorboard")
 }
 
 // ===== TUTORBOARD PAYMENTS =====
@@ -299,7 +299,7 @@ model TbPayment {
   student TbUser  @relation(fields: [studentId], references: [id])
 
   @@map("tb_payments")
-  @@schema("public")
+  @@schema("tutorboard")
 }
 
 // ===== TUTORBOARD NOTIFICATIONS =====
@@ -317,7 +317,7 @@ model TbNotification {
   user TbUser @relation(fields: [userId], references: [id])
 
   @@map("tb_notifications")
-  @@schema("public")
+  @@schema("tutorboard")
 }
 
 // ===== TUTORBOARD PRIVATE COMMENTS =====
@@ -337,7 +337,7 @@ model TbPrivateComment {
   target TbUser @relation("CommentTarget", fields: [targetId], references: [id])
 
   @@map("tb_private_comments")
-  @@schema("public")
+  @@schema("tutorboard")
 }
 
 // ===== TUTORBOARD MESSAGING =====
@@ -355,7 +355,7 @@ model TbConversation {
 
   @@unique([teacherId, parentId, studentId])
   @@map("tb_conversations")
-  @@schema("public")
+  @@schema("tutorboard")
 }
 
 model TbMessage {
@@ -372,7 +372,7 @@ model TbMessage {
   sender       TbUser         @relation(fields: [senderId], references: [id])
 
   @@map("tb_messages")
-  @@schema("public")
+  @@schema("tutorboard")
 }
 
 // ===== TUTORBOARD BADGES =====
@@ -387,5 +387,5 @@ model TbStudentBadge {
   student TbUser @relation(fields: [studentId], references: [id])
 
   @@map("tb_student_badges")
-  @@schema("public")
+  @@schema("tutorboard")
 }
