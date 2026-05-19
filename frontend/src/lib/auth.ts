@@ -15,7 +15,7 @@ export function redirectToLogin(forceLogin = false) {
 
 export function logout() {
     clearTokens();
-    redirectToLogin(true);
+    window.location.href = `${HUB_URL}/auth/logout`;
 }
 
 export function isLoggedIn(): boolean {
