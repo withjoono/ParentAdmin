@@ -384,6 +384,124 @@ export class TutorService {
         return records;
     }
 
+    // ===== CALENDAR =====
+
+    async getCalendarEvents(hubId: string, yearMonth: string) {
+        const parent = await this.resolveParent(hubId);
+        const parentId = parent.id;
+
+        const enrollments = await this.prisma.tbClassEnrollment.findMany({
+            where: { parentId },
+            include: {
+                student: { select: { id: true, username: true, hubUserId: true } },
+                class: { select: { id: true, name: true } },
+            },
+        });
+
+        const childMap = new Map<string, {
+            id: string; name: string; hubUserId: string | null; classIds: string[];
+        }>();
+        for (const e of enrollments) {
+            if (!childMap.has(e.studentId)) {
+                childMap.set(e.studentId, {
+                    id: e.studentId,
+                    name: e.student.username,
+                    hubUserId: e.student.hubUserId,
+                    classIds: [],
+                });
+            }
+            childMap.get(e.studentId)!.classIds.push(e.classId);
+        }
+
+        const year = parseInt(yearMonth.slice(0, 4));
+        const month = parseInt(yearMonth.slice(4, 6));
+        const from = new Date(year, month - 1, 1);
+        const to = new Date(year, month, 0, 23, 59, 59);
+
+        const events: any[] = [];
+
+        for (const child of childMap.values()) {
+            const { id: childId, name: childName, classIds } = child;
+
+            const [lessonPlans, lessonRecords, assignments, tests] = await Promise.all([
+                this.prisma.tbLessonPlan.findMany({
+                    where: { classId: { in: classIds }, scheduledDate: { gte: from, lte: to } },
+                    include: { class: { select: { name: true } } },
+                }),
+                this.prisma.tbLessonRecord.findMany({
+                    where: { lessonPlan: { classId: { in: classIds } }, recordDate: { gte: from, lte: to } },
+                    include: { lessonPlan: { include: { class: { select: { name: true } } } } },
+                }),
+                this.prisma.tbAssignment.findMany({
+                    where: { dueDate: { gte: from, lte: to }, lesson: { classId: { in: classIds } } },
+                    include: { lesson: { include: { class: { select: { name: true } } } } },
+                }),
+                this.prisma.tbTest.findMany({
+                    where: { testDate: { gte: from, lte: to }, lesson: { classId: { in: classIds } } },
+                    include: { lesson: { include: { class: { select: { name: true } } } } },
+                }),
+            ]);
+
+            for (const lp of lessonPlans) {
+                if (lp.scheduledDate) events.push({
+                    id: `lp_${lp.id}_${childId}`,
+                    date: lp.scheduledDate.toISOString().slice(0, 10),
+                    title: lp.title,
+                    subtitle: lp.class.name,
+                    type: 'lesson',
+                    childId, childName,
+                });
+            }
+            for (const lr of lessonRecords) {
+                events.push({
+                    id: `lr_${lr.id}_${childId}`,
+                    date: lr.recordDate.toISOString().slice(0, 10),
+                    title: lr.lessonPlan.title,
+                    subtitle: lr.lessonPlan.class.name,
+                    type: 'lesson',
+                    childId, childName,
+                    completed: true,
+                });
+            }
+            for (const a of assignments) {
+                if (a.dueDate) events.push({
+                    id: `asgn_${a.id}_${childId}`,
+                    date: a.dueDate.toISOString().slice(0, 10),
+                    title: a.title,
+                    subtitle: a.lesson.class.name,
+                    type: 'assignment',
+                    childId, childName,
+                });
+            }
+            for (const t of tests) {
+                if (t.testDate) events.push({
+                    id: `test_${t.id}_${childId}`,
+                    date: t.testDate.toISOString().slice(0, 10),
+                    title: t.title,
+                    subtitle: t.lesson.class.name,
+                    type: 'test',
+                    childId, childName,
+                });
+            }
+        }
+
+        const children = await Promise.all(
+            Array.from(childMap.values()).map(async (child) => {
+                let schoolName: string | null = null;
+                if (child.hubUserId) {
+                    const ms = await this.prisma.auth_member_s.findUnique({
+                        where: { member_id: child.hubUserId },
+                        select: { school_name: true },
+                    });
+                    schoolName = ms?.school_name ?? null;
+                }
+                return { id: child.id, name: child.name, schoolName };
+            })
+        );
+
+        return { events, children };
+    }
+
     // ===== HELPERS =====
 
     private async verifyParentChild(parentId: string, childId: string) {

@@ -71,6 +71,31 @@ export async function getDashboard(): Promise<ParentDashboard> {
     return response.data;
 }
 
+// ===== Calendar =====
+
+export interface CalendarEventRaw {
+    id: string;
+    date: string;
+    title: string;
+    subtitle?: string;
+    type: 'lesson' | 'assignment' | 'test' | 'school';
+    childId: string;
+    childName: string;
+    isHoliday?: boolean;
+    completed?: boolean;
+}
+
+export interface CalendarChildRaw {
+    id: string;
+    name: string;
+    schoolName: string | null;
+}
+
+export async function getCalendarEvents(yearMonth: string): Promise<{ events: CalendarEventRaw[]; children: CalendarChildRaw[] }> {
+    const response = await authClient.get('/api/tutor/calendar', { params: { yearMonth } });
+    return response.data;
+}
+
 // ===== Child Attendance =====
 
 export async function getChildAttendance(

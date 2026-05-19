@@ -53,6 +53,13 @@ export class TutorController {
         return this.tutorService.getPrivateComments(this.getHubId(req), studentId);
     }
 
+    // ===== CALENDAR =====
+    @Get('calendar')
+    getCalendar(@Req() req: any, @Query('yearMonth') yearMonth?: string) {
+        const ym = yearMonth || new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 7).replace(/-/g, '');
+        return this.tutorService.getCalendarEvents(this.getHubId(req), ym);
+    }
+
     // ===== CLASS RECORDS (공유 수업 기록) =====
     @Get('children/:childId/class-records')
     getChildClassRecords(
