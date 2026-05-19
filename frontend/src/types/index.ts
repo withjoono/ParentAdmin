@@ -20,7 +20,7 @@ export interface ChildClass {
 }
 
 export interface ChildSummary {
-    studentId: number;
+    studentId: string;
     studentName: string;
     progressRate: number;
     pendingAssignments: number;
