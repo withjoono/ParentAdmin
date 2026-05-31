@@ -5,18 +5,16 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
     LayoutDashboard,
-    BookOpen,
     BellRing,
     Link2,
     LogOut,
     Menu,
     X,
-    Clock,
-    TrendingUp,
     MessageCircle,
     FileText,
     ChevronDown,
     CreditCard,
+    HelpCircle,
 } from "lucide-react";
 import { config } from "@/lib/config";
 import { logout } from "@/lib/auth";
@@ -28,21 +26,9 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-    {
-        title: "대시보드",
-        href: "/",
-        icon: LayoutDashboard,
-    },
-    {
-        title: "선생님 대화",
-        href: "/tutor/comments",
-        icon: MessageCircle,
-    },
-    {
-        title: "수업 기록",
-        href: "/tutor/class-records",
-        icon: FileText,
-    },
+    { title: "대시보드", href: "/", icon: LayoutDashboard },
+    { title: "선생님 대화", href: "/tutor/comments", icon: MessageCircle },
+    { title: "수업 기록", href: "/tutor/class-records", icon: FileText },
 ];
 
 export function Sidebar() {
@@ -54,127 +40,227 @@ export function Sidebar() {
         href === "/" ? pathname === "/" : pathname.startsWith(href);
 
     return (
-        <>
-            {/* ─── Top Navigation Bar (gb-header design system) ─── */}
-            <header className="gb-header">
-                <div style={{ maxWidth: '1280px', margin: '0 auto', width: '100%', padding: '0 var(--space-4)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '100%' }}>
-                    {/* Left: Logo */}
-                    <Link href="/" className="gb-header-brand" style={{ textDecoration: 'none' }}>
-                        <span className="gb-header-brand-dot" style={{ width: 28, height: 28, borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <span style={{ fontSize: 'var(--text-xs)', fontWeight: 'var(--weight-bold)', color: 'var(--color-text-on-primary)' }}>P</span>
+        <header className="gb-header">
+            <div
+                style={{
+                    maxWidth: '1280px',
+                    margin: '0 auto',
+                    width: '100%',
+                    padding: '0 var(--space-4)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    height: '100%',
+                }}
+            >
+                {/* Left: Logo */}
+                <Link href="/" className="gb-header-brand" style={{ textDecoration: 'none' }}>
+                    <span
+                        className="gb-header-brand-dot"
+                        style={{
+                            width: 28,
+                            height: 28,
+                            borderRadius: 'var(--radius-sm)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <span
+                            style={{
+                                fontSize: 'var(--text-xs)',
+                                fontWeight: 'var(--weight-bold)',
+                                color: 'var(--color-text-on-primary)',
+                            }}
+                        >
+                            P
                         </span>
-                        Parent Admin
-                    </Link>
+                    </span>
+                    Parent Admin
+                </Link>
 
-                    {/* Center: Desktop Nav */}
-                    <nav className="gb-header-nav gb-hide-mobile">
+                {/* Center: Desktop Nav */}
+                <nav className="gb-header-nav gb-hide-mobile">
+                    {navItems.map((item) => (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={`gb-header-nav-link${isActive(item.href) ? " active" : ""}`}
+                        >
+                            <item.icon style={{ width: 16, height: 16 }} />
+                            {item.title}
+                        </Link>
+                    ))}
+                </nav>
+
+                {/* Right: Icon buttons */}
+                <div className="gb-header-actions gb-hide-mobile">
+                    <Link href="/help" className="gb-header-icon-btn" title="도움말">
+                        <HelpCircle style={{ width: 20, height: 20 }} />
+                    </Link>
+                    <a
+                        href={`${config.hubUrl}/products`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="gb-header-icon-btn"
+                        style={{ color: 'var(--color-primary)' }}
+                        title="이용권 구매"
+                    >
+                        <CreditCard style={{ width: 20, height: 20 }} />
+                    </a>
+                    <Link href="/notifications" className="gb-header-icon-btn" title="알림">
+                        <BellRing style={{ width: 20, height: 20 }} />
+                    </Link>
+                    <a
+                        href={`${config.hubUrl}/account-linkage`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="gb-header-icon-btn"
+                        title="계정연동"
+                    >
+                        <Link2 style={{ width: 20, height: 20 }} />
+                    </a>
+                    <div className="gb-header-user-wrap">
+                        <button
+                            className="gb-header-user-trigger"
+                            onClick={() => setUserOpen(!userOpen)}
+                        >
+                            <span>학부모 님</span>
+                            <ChevronDown style={{ width: 14, height: 14 }} />
+                        </button>
+                        {userOpen && (
+                            <>
+                                <div
+                                    className="gb-header-user-backdrop"
+                                    onClick={() => setUserOpen(false)}
+                                />
+                                <div className="gb-header-user-popover">
+                                    <a
+                                        href={`${config.hubUrl}/users/profile`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        마이 페이지
+                                    </a>
+                                    <a
+                                        href={`${config.hubUrl}/users/payment`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        결제내역
+                                    </a>
+                                    <div className="gb-header-user-popover-divider" />
+                                    <button
+                                        className="gb-logout-btn"
+                                        onClick={() => {
+                                            setUserOpen(false);
+                                            logout();
+                                        }}
+                                    >
+                                        로그아웃
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </div>
+
+                {/* Mobile hamburger */}
+                <button
+                    className="gb-header-icon-btn gb-hide-desktop"
+                    onClick={() => setMobileOpen(!mobileOpen)}
+                >
+                    {mobileOpen ? (
+                        <X style={{ width: 20, height: 20 }} />
+                    ) : (
+                        <Menu style={{ width: 20, height: 20 }} />
+                    )}
+                </button>
+            </div>
+
+            {/* Mobile Menu */}
+            {mobileOpen && (
+                <div
+                    style={{
+                        borderTop: '1px solid var(--color-border-light)',
+                        paddingBottom: 'var(--space-3)',
+                        paddingTop: 'var(--space-2)',
+                    }}
+                    className="gb-hide-desktop"
+                >
+                    <nav
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 'var(--space-1)',
+                            padding: '0 var(--space-4)',
+                        }}
+                    >
                         {navItems.map((item) => (
                             <Link
                                 key={item.href}
                                 href={item.href}
+                                onClick={() => setMobileOpen(false)}
                                 className={`gb-header-nav-link${isActive(item.href) ? " active" : ""}`}
+                                style={{ padding: 'var(--space-2) var(--space-3)' }}
                             >
                                 <item.icon style={{ width: 16, height: 16 }} />
                                 {item.title}
                             </Link>
                         ))}
                     </nav>
-
-                    {/* Right: Icon buttons */}
-                    <div className="gb-header-actions gb-hide-mobile">
-                        {/* 결제 */}
-                        <a
-                            href={`${config.hubUrl}/products`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="gb-header-icon-btn"
-                            style={{ color: 'var(--color-primary)' }}
-                            title="이용권 구매"
-                        >
-                            <CreditCard style={{ width: 20, height: 20 }} />
-                        </a>
-                        {/* 알림 */}
-                        <Link
-                            href="/notifications"
-                            className="gb-header-icon-btn"
-                            title="알림"
-                        >
-                            <BellRing style={{ width: 20, height: 20 }} />
-                        </Link>
-                        {/* 계정연동 */}
-                        <a
-                            href={`${config.hubUrl}/account-linkage`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="gb-header-icon-btn"
-                            title="계정연동"
-                        >
-                            <Link2 style={{ width: 20, height: 20 }} />
-                        </a>
-                        {/* 사용자 드롭다운 */}
-                        <div className="gb-header-user-wrap">
-                            <button
-                                className="gb-header-user-trigger"
-                                onClick={() => setUserOpen(!userOpen)}
-                            >
-                                <span>학부모 님</span>
-                                <ChevronDown style={{ width: 14, height: 14 }} />
-                            </button>
-                            {userOpen && (
-                                <>
-                                    <div className="gb-header-user-backdrop" onClick={() => setUserOpen(false)} />
-                                    <div className="gb-header-user-popover">
-                                        <a href={`${config.hubUrl}/users/profile`} target="_blank" rel="noopener noreferrer">마이 페이지</a>
-                                        <a href={`${config.hubUrl}/users/payment`} target="_blank" rel="noopener noreferrer">결제내역</a>
-                                        <div className="gb-header-user-popover-divider" />
-                                        <button className="gb-logout-btn" onClick={() => { setUserOpen(false); logout(); }}>로그아웃</button>
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Mobile hamburger */}
-                    <button
-                        className="gb-header-icon-btn gb-hide-desktop"
-                        onClick={() => setMobileOpen(!mobileOpen)}
+                    <div
+                        style={{
+                            marginTop: 'var(--space-3)',
+                            borderTop: '1px solid var(--color-border-light)',
+                            paddingTop: 'var(--space-3)',
+                            padding: '0 var(--space-4)',
+                        }}
                     >
-                        {mobileOpen ? <X style={{ width: 20, height: 20 }} /> : <Menu style={{ width: 20, height: 20 }} />}
-                    </button>
-                </div>
-
-                {/* Mobile Menu */}
-                {mobileOpen && (
-                    <div style={{ borderTop: '1px solid var(--color-border-light)', paddingBottom: 'var(--space-3)', paddingTop: 'var(--space-2)' }} className="gb-hide-desktop">
-                        <nav style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)', padding: '0 var(--space-4)' }}>
-                            {navItems.map((item) => (
-                                <Link
-                                    key={item.href}
-                                    href={item.href}
-                                    onClick={() => setMobileOpen(false)}
-                                    className={`gb-header-nav-link${isActive(item.href) ? " active" : ""}`}
-                                    style={{ padding: 'var(--space-2) var(--space-3)' }}
-                                >
-                                    <item.icon style={{ width: 16, height: 16 }} />
-                                    {item.title}
-                                </Link>
-                            ))}
-                        </nav>
-                        <div style={{ marginTop: 'var(--space-3)', borderTop: '1px solid var(--color-border-light)', paddingTop: 'var(--space-3)', padding: '0 var(--space-4)' }}>
-                            <a href={`${config.hubUrl}/users/profile`} target="_blank" rel="noopener noreferrer" className="gb-header-nav-link" style={{ width: '100%' }}>
-                                마이 페이지
-                            </a>
-                            <a href={`${config.hubUrl}/users/payment`} target="_blank" rel="noopener noreferrer" className="gb-header-nav-link" style={{ width: '100%' }}>
-                                결제내역
-                            </a>
-                            <button className="gb-header-nav-link" style={{ width: '100%', color: 'var(--color-error, #ef4444)' }} onClick={() => { setMobileOpen(false); logout(); }}>
-                                <LogOut style={{ width: 16, height: 16 }} />
-                                로그아웃
-                            </button>
-                        </div>
+                        <Link
+                            href="/help"
+                            onClick={() => setMobileOpen(false)}
+                            className="gb-header-nav-link"
+                            style={{ width: '100%' }}
+                        >
+                            <HelpCircle style={{ width: 16, height: 16 }} />
+                            도움말
+                        </Link>
+                        <a
+                            href={`${config.hubUrl}/users/profile`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="gb-header-nav-link"
+                            style={{ width: '100%' }}
+                        >
+                            마이 페이지
+                        </a>
+                        <a
+                            href={`${config.hubUrl}/users/payment`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="gb-header-nav-link"
+                            style={{ width: '100%' }}
+                        >
+                            결제내역
+                        </a>
+                        <button
+                            className="gb-header-nav-link"
+                            style={{
+                                width: '100%',
+                                color: 'var(--color-error, #ef4444)',
+                            }}
+                            onClick={() => {
+                                setMobileOpen(false);
+                                logout();
+                            }}
+                        >
+                            <LogOut style={{ width: 16, height: 16 }} />
+                            로그아웃
+                        </button>
                     </div>
-                )}
-            </header>
-        </>
+                </div>
+            )}
+        </header>
     );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProgressBar } from "@/components/ui/progress";
@@ -25,7 +26,10 @@ import { getSchoolMenu, getSchoolTimetable, getSchoolSchedule } from "@/lib/api/
 import type { SchoolMenuMeal, TimetableEntry, ScheduleEvent } from "@/lib/api/school";
 import { DashboardCalendar } from "@/components/DashboardCalendar";
 import type { CalendarEvent, CalendarChild } from "@/components/DashboardCalendar";
-import { config } from "@/lib/config";
+import { WidgetCard } from "@/components/WidgetCard";
+import { ChildTabs } from "@/components/ChildTabs";
+import { CalendarLegend } from "@/components/CalendarLegend";
+import { Coachmark } from "@/components/Coachmark";
 
 // ==================== 유틸 ====================
 
@@ -41,36 +45,6 @@ function neisDateToISO(raw: string): string {
 
 // ==================== 학교 위젯 ====================
 
-function WidgetCard({
-    icon,
-    title,
-    children,
-    loading,
-}: {
-    icon: React.ReactNode;
-    title: string;
-    children: React.ReactNode;
-    loading?: boolean;
-}) {
-    return (
-        <Card className="flex-1 min-w-0">
-            <div className="p-3">
-                <p className="text-xs font-semibold text-muted-foreground flex items-center gap-1 mb-2">
-                    {icon}
-                    {title}
-                </p>
-                {loading ? (
-                    <div className="flex justify-center py-3">
-                        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                    </div>
-                ) : (
-                    children
-                )}
-            </div>
-        </Card>
-    );
-}
-
 function MenuWidget({ studentId }: { studentId: string }) {
     const [meals, setMeals] = useState<SchoolMenuMeal[]>([]);
     const [loading, setLoading] = useState(true);
@@ -79,8 +53,15 @@ function MenuWidget({ studentId }: { studentId: string }) {
     }, [studentId]);
     const lunch = meals.find((m) => m.mealType === "중식") || meals[0];
     return (
-        <WidgetCard icon={<UtensilsCrossed className="h-3 w-3" />} title="오늘의 급식" loading={loading}>
-            {lunch ? (
+        <WidgetCard
+            icon={<UtensilsCrossed className="h-3 w-3" />}
+            title="오늘의 급식"
+            loading={loading}
+            helpText="NEIS 공공데이터에서 가져옵니다. 학교에 따라 등록이 늦거나 비어 있을 수 있어요."
+            emptyText="아직 등록되지 않았어요"
+            empty={!lunch}
+        >
+            {lunch && (
                 <div>
                     <ul className="space-y-0.5">
                         {lunch.menu.slice(0, 5).map((item, i) => (
@@ -90,8 +71,6 @@ function MenuWidget({ studentId }: { studentId: string }) {
                     </ul>
                     {lunch.kcal && <p className="text-[10px] text-muted-foreground mt-1">{lunch.kcal}</p>}
                 </div>
-            ) : (
-                <p className="text-xs text-muted-foreground">급식 정보 없음</p>
             )}
         </WidgetCard>
     );
@@ -104,8 +83,15 @@ function TimetableWidget({ studentId }: { studentId: string }) {
         getSchoolTimetable(studentId).then((d) => { setEntries(d); setLoading(false); });
     }, [studentId]);
     return (
-        <WidgetCard icon={<Clock className="h-3 w-3" />} title="오늘의 시간표" loading={loading}>
-            {entries.length > 0 ? (
+        <WidgetCard
+            icon={<Clock className="h-3 w-3" />}
+            title="오늘의 시간표"
+            loading={loading}
+            helpText="자녀의 학교 종류(초/중/고)에 맞춰 자동으로 NEIS에서 조회합니다."
+            emptyText="시간표가 비어 있어요"
+            empty={entries.length === 0}
+        >
+            {entries.length > 0 && (
                 <div className="space-y-0.5">
                     {entries.slice(0, 7).map((e) => (
                         <div key={e.period} className="flex items-center gap-1.5 text-xs">
@@ -114,8 +100,6 @@ function TimetableWidget({ studentId }: { studentId: string }) {
                         </div>
                     ))}
                 </div>
-            ) : (
-                <p className="text-xs text-muted-foreground">시간표 정보 없음</p>
             )}
         </WidgetCard>
     );
@@ -170,7 +154,7 @@ function TutorCard({ child }: { child: ChildSummary }) {
 
 function ChildSection({ child }: { child: ChildSummary }) {
     return (
-        <div className="space-y-2">
+        <div className="space-y-2 scroll-mt-24" data-child-section={child.studentId}>
             <div className="flex items-center gap-2">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary shrink-0">
                     <User className="h-4 w-4" />
@@ -195,6 +179,14 @@ function ChildSection({ child }: { child: ChildSummary }) {
 // ==================== 빈 상태 ====================
 
 function EmptyState() {
+    const router = useRouter();
+    // 자녀가 0명이면 4-스텝 온보딩으로 자동 진입(한 번만)
+    useEffect(() => {
+        try {
+            const done = window.localStorage.getItem("onboarding_done_v1") === "1";
+            if (!done) router.push("/onboarding");
+        } catch {}
+    }, [router]);
     return (
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-6">
             <div className="text-7xl mb-6 select-none">👨‍👩‍👧‍👦</div>
@@ -202,12 +194,12 @@ function EmptyState() {
             <p className="text-muted-foreground mb-8 max-w-xs leading-relaxed text-sm">
                 자녀와 계정을 연동하면 수업 현황, 급식, 시간표, 학교 일정을 한눈에 확인할 수 있어요
             </p>
-            <a href={`${config.hubUrl}/account-linkage`}>
+            <Link href="/onboarding">
                 <Button size="lg" className="gap-2">
                     <Link2 className="h-4 w-4" />
-                    지금 연동하기
+                    시작 가이드 열기
                 </Button>
-            </a>
+            </Link>
         </div>
     );
 }
@@ -331,7 +323,7 @@ export default function DashboardPage() {
             </div>
 
             {/* 요약 통계 */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-3" data-coach="summary">
                 <Card>
                     <CardContent className="p-4 flex items-center gap-3">
                         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -367,12 +359,22 @@ export default function DashboardPage() {
                 </Card>
             </div>
 
+            {/* 자녀 탭 */}
+            {children.length > 1 && (
+                <ChildTabs
+                    items={children.map((c) => ({ id: c.studentId, name: c.studentName }))}
+                />
+            )}
+
             {/* 통합 일정 캘린더 */}
-            <div>
-                <h2 className="text-base font-semibold mb-3 flex items-center gap-2">
+            <div data-coach="calendar">
+                <h2 className="text-base font-semibold mb-2 flex items-center gap-2">
                     <Calendar className="h-4 w-4" />
                     수업 &amp; 학교 일정
                 </h2>
+                <CalendarLegend
+                    items={calendarChildren.map((c) => ({ id: c.id, name: c.name }))}
+                />
                 <DashboardCalendar
                     events={allCalendarEvents}
                     children={calendarChildren}
@@ -382,12 +384,34 @@ export default function DashboardPage() {
             </div>
 
             {/* 자녀별 오늘의 현황 */}
-            <div className="space-y-6">
+            <div className="space-y-6" data-coach="children">
                 <h2 className="text-base font-semibold">오늘의 자녀 현황</h2>
                 {children.map((child) => (
                     <ChildSection key={child.studentId} child={child} />
                 ))}
             </div>
+
+            {/* 첫 방문 코치마크 */}
+            <Coachmark
+                storageKey="coachmark_v1_done"
+                steps={[
+                    {
+                        target: "summary",
+                        title: "한 줄 요약",
+                        body: "등록 자녀 수, 미제출 과제 합계, 평균 진도율을 한눈에 확인할 수 있어요.",
+                    },
+                    {
+                        target: "calendar",
+                        title: "통합 일정 캘린더",
+                        body: "자녀별 색상으로 수업·과제·시험·학사일정·공휴일을 모두 한 화면에 표시해요.",
+                    },
+                    {
+                        target: "children",
+                        title: "자녀별 카드",
+                        body: "각 자녀의 진도·과제·점수, 그리고 오늘의 급식·시간표가 함께 표시됩니다.",
+                    },
+                ]}
+            />
         </div>
     );
 }
