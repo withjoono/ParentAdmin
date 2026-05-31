@@ -1,6 +1,3 @@
-"use client";
-
-import { use } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
@@ -188,12 +185,16 @@ const TOPICS: Record<
     },
 };
 
-export default function HelpTopicPage({
+export function generateStaticParams() {
+    return Object.keys(TOPICS).map((topic) => ({ topic }));
+}
+
+export default async function HelpTopicPage({
     params,
 }: {
     params: Promise<{ topic: string }>;
 }) {
-    const { topic } = use(params);
+    const { topic } = await params;
     const data = TOPICS[topic];
     if (!data) notFound();
 
